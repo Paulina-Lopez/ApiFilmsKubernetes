@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-films-deployment
+  labels:
+    app: api-films
+    version: "1.0"
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      app: api-films
+  template:
+    metadata:
+      labels:
+        app: api-films
+        version: "1.0"
+    spec:
+      containers:
+      - name: api-films
+        image: paulinalopez22/api-films
+        ports:
+          - name: http-server
+            containerPort: 5000
+        env:
+          - name: DATABASE_URL
+            value: postgresql://postgres:films@db/films
