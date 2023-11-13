@@ -1,5 +1,5 @@
 class AppErrorBaseClass(Exception):
-    print(Exception)
+    pass
 
 class ObjectNotFound(AppErrorBaseClass):
-    print(AppErrorBaseClass)
+    pass
