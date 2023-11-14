@@ -27,3 +27,15 @@ CREATE TABLE "public"."film" (
 
 
 ALTER TABLE ONLY "public"."actor" ADD CONSTRAINT "actor_film_id_fkey" FOREIGN KEY (film_id) REFERENCES film(id) NOT DEFERRABLE;
+
+
+CREATE SEQUENCE cinema_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1;
+
+CREATE TABLE "public"."cinema" (
+    "id" integer DEFAULT nextval('cinema_id_seq') NOT NULL,
+    "name" character varying,
+    CONSTRAINT "cinema_pkey" PRIMARY KEY ("id")
+) WITH (oids = false);
+
+ALTER TABLE "public"."film" ADD COLUMN "cinema_id" integer;
+ALTER TABLE ONLY "public"."film" ADD CONSTRAINT "film_cinema_id_fkey" FOREIGN KEY (cinema_id) REFERENCES cinema(id) ON DELETE SET NULL;

@@ -3,7 +3,7 @@ from flask import request, Blueprint
 from flask_restful import Api, Resource
 
 from .schemas import CinemaSchema, FilmSchema
-from ..models import Cinema, Film, Actor, FilmCinema
+from ..models import Cinema, Film, Actor
 
 films_v1_0_bp = Blueprint('films_v1_0_bp', __name__)
 film_schema = FilmSchema()
@@ -27,21 +27,23 @@ class FilmListResource(Resource):
         data = request.get_json()
         film_dict = film_schema.load(data)
         film = Film(title=film_dict['title'],
-                    length=film_dict['length'],
-                    year=film_dict['year'],
-                    director=film_dict['director'])
+                length=film_dict['length'],
+                year=film_dict['year'],
+                director=film_dict['director'])
+        
+        if 'cinema_id' in film_dict:
+            cinema = Cinema.get_by_id(film_dict['cinema_id'])
+            if cinema:
+                film.cinema = cinema
         
         for actor_data in film_dict['actors']:
             actor = Actor(actor_data['name'])
             film.actors.append(actor)
-            
-        if 'cinemas' in film_dict:
-            for cinema_id in film_dict['cinemas']:
-                association = FilmCinema(film_id=film.id, cinema_id=cinema_id)
-                db.session.add(association)
+        
         film.save()
         resp = film_schema.dump(film)
         return resp, 201
+
 
 class FilmResource(Resource):
     def get(self, film_id):
